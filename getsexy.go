@@ -9,19 +9,7 @@ import (
 )
 
 func main() {
-	lines := split_lines("primes.txt")
-	primes := make([]int64, len(lines))
-
-	for i, line := range lines {
-		prime, err := strconv.ParseInt(line, 10, 0)
-
-		if err != nil {
-			panic(err)
-		}
-
-		primes[i] = prime
-	}
-
+	primes := read_primes("primes.txt")
 
 	for i := 0; i < 10; i++ { 
 		rand_prime := random_sexy(&primes)
@@ -36,21 +24,26 @@ func random_sexy(primes *[]int64) int64 {
 	return rand_prime
 }
 
-func split_lines(filename string) []string {
+func read_primes(filename string) []int64 {
 	file, err := os.Open(filename)
 
 	if err != nil {
 			panic(fmt.Sprintf("Got error: %v\n", err))
 	}
 
-	lines := make([]string, 0)
+	primes := make([]int64, 0)
 	scanner := bufio.NewScanner(file)	
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		lines = append(lines,line)
+
+		prime, err := strconv.ParseInt(line, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		primes = append(primes,prime)
 	}
 
-	return lines
+	return primes
 }
 
