@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"strconv"
 	"math/rand"
+	"net/http"
 )
 
 func main() {
@@ -14,6 +15,27 @@ func main() {
 	for i := 0; i < 10; i++ { 
 		rand_prime := random_sexy(&primes)
 		fmt.Printf("(%v,%v)\n", rand_prime, rand_prime+6)
+	}
+
+	/*
+	handler := primeHandler(primes)
+	fmt.Println(handler)
+	*/
+
+	http.HandleFunc("/", primeHandler(primes))
+	http.ListenAndServe(":8080", nil)
+}
+
+/*
+func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+}
+*/
+
+func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
+	return func(wt http.ResponseWriter, rt *http.Request) {
+		sexy_prime := random_sexy(&p)
+		fmt.Fprintf(wt, "Hi there, I love (%v,%v)", sexy_prime, sexy_prime+6)
 	}
 }
 
