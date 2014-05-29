@@ -7,7 +7,13 @@ import (
 	"strconv"
 	"math/rand"
 	"net/http"
+	"html/template"
 )
+
+type SexyPrime struct {
+	P1 int64
+	P2 int64
+}
 
 func main() {
 	primes := read_primes("/home/geoff/projects/go/src/github.com/geoffhotchkiss/primes.sexy/primes.txt")
@@ -24,7 +30,11 @@ func main() {
 func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 	return func(wt http.ResponseWriter, rt *http.Request) {
 		sexy_prime := random_sexy(&p)
-		fmt.Fprintf(wt, "Hi there, I love (%v,%v)", sexy_prime, sexy_prime+6)
+		sp := SexyPrime{P1: sexy_prime, P2: sexy_prime+6}
+		t, _ := template.ParseFiles("html/index.html")
+		t.Execute(wt, sp)
+		fmt.Printf("wt: %v\nsp: %v\nsexy_prime: %v\n", wt, sp, sexy_prime)
+		//fmt.Fprintf(wt, "Hi there, I love (%v,%v)", sexy_prime, sexy_prime+6)
 	}
 }
 
