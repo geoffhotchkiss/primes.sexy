@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	primes := read_primes("primes.txt")
+	primes := read_primes("/home/geoff/projects/go/src/github.com/geoffhotchkiss/primes.sexy/primes.txt")
 
 	for i := 0; i < 10; i++ { 
 		rand_prime := random_sexy(&primes)
