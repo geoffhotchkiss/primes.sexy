@@ -17,20 +17,9 @@ func main() {
 		fmt.Printf("(%v,%v)\n", rand_prime, rand_prime+6)
 	}
 
-	/*
-	handler := primeHandler(primes)
-	fmt.Println(handler)
-	*/
-
 	http.HandleFunc("/", primeHandler(primes))
 	http.ListenAndServe(":8080", nil)
 }
-
-/*
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
-}
-*/
 
 func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 	return func(wt http.ResponseWriter, rt *http.Request) {
