@@ -24,6 +24,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", primeHandler(primes))
+	serveSingle("/favicon.ico","./favicon.ico")
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -36,6 +37,12 @@ func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 		fmt.Printf("\nhttp request: %v\n", rt.RemoteAddr)
 		//fmt.Fprintf(wt, "Hi there, I love (%v,%v)", sexy_prime, sexy_prime+6)
 	}
+}
+
+func serveSingle(pattern string, filename string) {
+	http.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filename)
+	})
 }
 
 func random_sexy(primes *[]int64) int64 {
