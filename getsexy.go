@@ -33,7 +33,7 @@ func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 		sp := SexyPrime{P1: sexy_prime, P2: sexy_prime+6}
 		t, _ := template.ParseFiles("html/index.html")
 		t.Execute(wt, sp)
-		fmt.Printf("wt: %v\nsp: %v\nsexy_prime: %v\n", wt, sp, sexy_prime)
+		fmt.Printf("\nhttp request: %v\n", rt.RemoteAddr)
 		//fmt.Fprintf(wt, "Hi there, I love (%v,%v)", sexy_prime, sexy_prime+6)
 	}
 }
