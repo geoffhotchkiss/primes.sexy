@@ -17,7 +17,7 @@ type SexyPrime struct {
 }
 
 const (
-	SexyStamp = "2006/1/_2 15:04:05.000000000" 
+	SexyStamp = "2006/1/2 15:04:05.000000000" 
 )
 
 func main() {
@@ -31,6 +31,7 @@ func main() {
 
 	http.HandleFunc("/", primeHandler(primes))
 	serveSingle("/favicon.ico","./favicon.ico")
+	serveSingle("/html/sexy.css","./html/sexy.css")
 	http.ListenAndServe(":8080", nil)
 }
 
