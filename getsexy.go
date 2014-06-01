@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"math/rand"
 	"net/http"
+	"http/fcgi"
+	"net"
 	"html/template"
 	"time"
 )
