@@ -16,10 +16,18 @@ type SexyPrime struct {
 	P2 int64
 }
 
+const (
+	SexyStamp = "2006/1/_2 15:04:05.000000000" 
+)
+
 func main() {
 	primes := read_primes("/home/geoff/projects/go/src/github.com/geoffhotchkiss/primes.sexy/primes.txt")
+	seed := time.Now().Unix()
+	rand.Seed(seed)
 
 	fmt.Println("Starting server...")
+	fmt.Println("Seed:", seed)
+	fmt.Println()
 
 	http.HandleFunc("/", primeHandler(primes))
 	serveSingle("/favicon.ico","./favicon.ico")
@@ -30,12 +38,12 @@ func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 	return func(wt http.ResponseWriter, rt *http.Request) {
 		sexy_prime := random_sexy(&p)
 		sp := SexyPrime{P1: sexy_prime, P2: sexy_prime+6}
-		currentTime := time.Now()
+		currentTime := time.Now().Format(SexyStamp)
 
 		t, _ := template.ParseFiles("html/index.html")
 		t.Execute(wt, sp)
 
-		fmt.Printf("\n%v http request: %v\n", currentTime, rt.RemoteAddr)
+		fmt.Printf("%v http request: %v\n", currentTime, rt.RemoteAddr)
 	}
 }
 
