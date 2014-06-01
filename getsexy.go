@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"html/template"
+	"time"
 )
 
 type SexyPrime struct {
@@ -18,10 +19,7 @@ type SexyPrime struct {
 func main() {
 	primes := read_primes("/home/geoff/projects/go/src/github.com/geoffhotchkiss/primes.sexy/primes.txt")
 
-	for i := 0; i < 10; i++ { 
-		rand_prime := random_sexy(&primes)
-		fmt.Printf("(%v,%v)\n", rand_prime, rand_prime+6)
-	}
+	fmt.Println("Starting server...")
 
 	http.HandleFunc("/", primeHandler(primes))
 	serveSingle("/favicon.ico","./favicon.ico")
@@ -32,10 +30,12 @@ func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 	return func(wt http.ResponseWriter, rt *http.Request) {
 		sexy_prime := random_sexy(&p)
 		sp := SexyPrime{P1: sexy_prime, P2: sexy_prime+6}
+		currentTime := time.Now()
+
 		t, _ := template.ParseFiles("html/index.html")
 		t.Execute(wt, sp)
-		fmt.Printf("\nhttp request: %v\n", rt.RemoteAddr)
-		//fmt.Fprintf(wt, "Hi there, I love (%v,%v)", sexy_prime, sexy_prime+6)
+
+		fmt.Printf("\n%v http request: %v\n", currentTime, rt.RemoteAddr)
 	}
 }
 
