@@ -32,7 +32,7 @@ func main() {
 	http.HandleFunc("/", primeHandler(primes))
 	serveSingle("/favicon.ico","./favicon.ico")
 	serveSingle("/html/sexy.css","./html/sexy.css")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8081", nil)
 }
 
 func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
