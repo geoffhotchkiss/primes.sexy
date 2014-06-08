@@ -9,9 +9,11 @@ import (
 	"net/http"
 	"html/template"
 	"time"
+	"encoding/json"
 )
 
 type SexyPrime struct {
+	Success bool
 	P1 int64
 	P2 int64
 }
@@ -30,19 +32,53 @@ func main() {
 	fmt.Println()
 
 	http.HandleFunc("/", primeHandler(primes))
+	http.HandleFunc("/getsexy/", primeReqHandler(primes))
 	http.ListenAndServe(":8081", nil)
 }
 
 func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 	return func(wt http.ResponseWriter, rt *http.Request) {
 		sexy_prime := random_sexy(&p)
-		sp := SexyPrime{P1: sexy_prime, P2: sexy_prime+6}
+		sp := SexyPrime{Success: true, P1: sexy_prime, P2: sexy_prime+6}
 		currentTime := time.Now().Format(SexyStamp)
 
 		t, _ := template.ParseFiles("html/index.html")
 		t.Execute(wt, sp)
 
 		fmt.Printf("%v http request: %+v\n", currentTime, rt.Header["X-Real-Ip"])
+	}
+}
+
+func primeReqHandler(primes []int64) func (http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		param := r.URL.Path[9:]
+		num64, err := strconv.ParseInt(param, 10, 0)
+		badSexy, _ := json.Marshal(SexyPrime{Success: false, P1: -1, P2: -1})
+		w.Header().Set("Content-Type","applicaiton/json")
+
+		if err != nil {
+			w.Write(badSexy)
+			return
+		} 
+
+		num := int(num64)	
+
+		if num > len(primes) {
+			w.Write(badSexy)
+			return
+		}	
+
+		prime := primes[num]
+		sexyPrime := SexyPrime{Success: true, P1: prime, P2: prime+6}
+		sexyJson, err := json.Marshal(sexyPrime)
+
+		if err != nil {
+			fmt.Fprintf(w, "got error %v\n", err)
+			w.Write(badSexy)
+			return
+		}
+
+		w.Write(sexyJson)
 	}
 }
 
