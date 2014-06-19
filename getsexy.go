@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"time"
 	"encoding/json"
+	"github.com/crawford/nap"
 )
 
 type SexyPrime struct {
@@ -31,10 +32,19 @@ func main() {
 	fmt.Println("Seed:", seed)
 	fmt.Println()
 
+	http.Handle("/getsexy/", nap.HandlerFunc(getSexy(primes)))
 	http.HandleFunc("/", primeHandler(primes))
-	http.HandleFunc("/getsexy/", primeReqHandler(primes))
+	//http.HandleFunc("/getsexy/", primeReqHandler(primes))
 	http.ListenAndServe(":8081", nil)
 }
+
+func pickPrimes(p []int64) func(*http.Request) (interface{}, nap.Status) {
+	return func(r *http.Request) (interface{}, nap.Status){
+		sexy_prime := random_sexy(&p)
+		return SexyPrime{P1: sexy_prime, P2: sexy_prime+6}, nap.OK{} 
+	}
+}
+
 
 func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 	return func(wt http.ResponseWriter, rt *http.Request) {
@@ -49,11 +59,30 @@ func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+func getSexy(p []int64) func(*http.Request) (interface{}, nap.Status) {
+	return func(r *http.Request) (interface{}, nap.Status) {
+		param := r.URL.Path[9:]
+		num64, err := strconv.ParseInt(param, 10, 0)
+		num := int(num64)
+
+		if err != nil {
+			return nil,nap.NotFound{fmt.Sprintf("could not convert param: %s to number", param)}
+		}
+
+		if num >= len(p) || num < 0 {
+			return nil,nap.NotFound{fmt.Sprintf("request out of range of 0 and %d", len(p)-1)}
+		} 
+
+		prime := p[num]
+		return SexyPrime{P1: prime, P2: prime+6}, nap.OK{}
+	}
+}
+
 func primeReqHandler(primes []int64) func (http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		param := r.URL.Path[9:]
 		badSexy := SexyPrime{error: "", P1: -1, P2: -1}
-		w.Header().Set("Content-Type","applicaiton/json")
+		//w.Header().Set("Content-Type","applicaiton/json")
 
 		num64, err := strconv.ParseInt(param, 10, 0)
 		num := int(num64)
