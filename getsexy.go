@@ -28,8 +28,11 @@ func main() {
 	seed := time.Now().Unix()
 	rand.Seed(seed)
 
+	fmt.Println("==================")
+	fmt.Println("Using go 1.4")
 	fmt.Println("Starting server...")
 	fmt.Println("Seed:", seed)
+	fmt.Println("==================")
 	fmt.Println()
 
 	http.Handle("/getsexy/", nap.HandlerFunc(getSexy(primes)))
@@ -52,7 +55,7 @@ func primeHandler(p []int64) func(http.ResponseWriter, *http.Request) {
 		sp := SexyPrime{error: "", P1: sexy_prime, P2: sexy_prime+6}
 		currentTime := time.Now().Format(SexyStamp)
 
-		t, _ := template.ParseFiles("html/index.html")
+		t, _ := template.ParseFiles("/home/geoff/projects/go/src/github.com/geoffhotchkiss/primes.sexy/html/index.html")
 		t.Execute(wt, sp)
 
 		fmt.Printf("%v http request: %+v\n", currentTime, rt.Header["X-Real-Ip"])
