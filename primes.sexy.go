@@ -15,7 +15,7 @@ func main() {
 	var primes = read_primes()
 	var random_prime = random_sexy_prime(primes)
 
-	fmt.Printf("(%d, %d)", random_prime, random_prime+6)
+	fmt.Printf("(%d, %d)\n", random_prime, random_prime+6)
 }
 
 func random_sexy_prime(primes []int) int {
