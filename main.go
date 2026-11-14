@@ -6,26 +6,15 @@ import (
 	"math/rand/v2"
 	"strconv"
 	"strings"
+	"github.com/geoffhotchkiss/primes.sexy/sexyprime"
 )
 
 //go:embed primes.txt
 var primes string
 
-type SexyPrime int
-
-func (p SexyPrime) String() string {
-	p1, p2 := p.Pair()
-	return fmt.Sprintf("(%d, %d)", p1, p2)
-}
-
-func (p SexyPrime) Pair() (int, int) {
-	var prime = int(p)
-	return prime, prime + 6
-}
-
 func main() {
 	var primes = read_primes()
-	var sp = SexyPrime(random_sexy_prime(primes))
+	var sp = sexyprime.SexyPrime(random_sexy_prime(primes))
 
 	fmt.Printf("%s\n", sp)
 }
