@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	sp "github.com/geoffhotchkiss/primes.sexy/sexyprime"
+	"github.com/geoffhotchkiss/primes.sexy/server"
 	"github.com/alecthomas/kong"
 )
 
@@ -31,6 +32,7 @@ type ServerCmd struct {
 
 func (s *ServerCmd) Run(ctx *Context) error {
 	fmt.Printf("Running server on port %d\n", s.Port)
+	server.RunServer(s.Port)
 	return nil
 }
 
