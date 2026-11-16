@@ -1,7 +1,7 @@
 package server
 
 import (
-	_ "embed"
+	"embed"
 	"fmt"
 	"html/template"
 	"log"
@@ -9,8 +9,8 @@ import (
 	"github.com/geoffhotchkiss/primes.sexy/sexyprime"
 )
 
-//go:embed html/index.tmpl
-var indexHTML string
+//go:embed html
+var fs embed.FS
 
 type sexyPrimeContent struct {
 	P1 int
@@ -18,11 +18,10 @@ type sexyPrimeContent struct {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	thing, err := template.New("index").Parse(indexHTML)
+	thing, err := template.New("index").ParseFS(fs, "html/index.tmpl")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 
 	tmp := sexyprime.RandomSexyPrime(sexyprime.ReadPrimes())
 
@@ -37,7 +36,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFileFS(w, r, fs, "html/favicon.ico")
+}
+
 func RunServer(port int) {
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/favicon.ico", faviconHandler)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
