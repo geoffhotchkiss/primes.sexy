@@ -17,20 +17,19 @@ type sexyPrimeContent struct {
 	P2 int
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	thing, err := template.New("index").ParseFS(fs, "html/index.tmpl")
-	if err != nil {
-		log.Fatal(err)
-	}
+type SexyPrimeHandler struct {
+	SexyPrimes []int
+	SexyTemplate *template.Template
+}
 
-	tmp := sexyprime.RandomSexyPrime(sexyprime.ReadPrimes())
-
+func (h *SexyPrimeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	tmp := sexyprime.RandomSexyPrime(h.SexyPrimes)
 	content := sexyPrimeContent {
 		P1: tmp,
 		P2: tmp+6,
 	}
 
-	err = thing.Execute(w, content)
+	err := h.SexyTemplate.Execute(w, content)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,7 +40,17 @@ func faviconHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RunServer(port int) {
-	http.HandleFunc("/", handler)
+	thing, err := template.New("index").ParseFS(fs, "html/index.tmpl")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sexyHandler := &SexyPrimeHandler{
+		SexyPrimes: sexyprime.ReadPrimes(),
+		SexyTemplate: thing,
+	}
+
+	http.Handle("/", sexyHandler)
 	http.HandleFunc("/favicon.ico", faviconHandler)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
